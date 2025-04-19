@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用戶主頁</title>
+    <!-- 必須有相同的 GA4 代碼 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID'); // 替換 ID
+    </script>
+</head>
+<body>
+    <h1>歡迎回來！</h1>
+    <input type="text" placeholder="輸入訊息">
+    <button onclick="alert('已模擬發送！')">發送</button>
+</body>
+</html>
