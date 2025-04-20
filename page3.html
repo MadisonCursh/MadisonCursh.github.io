@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4ZGD289Y7"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -9,57 +8,46 @@
         gtag('js', new Date());
         gtag('config', 'G-P4ZGD289Y7');
         
-        // 記錄頁面進入時間
-        sessionStorage.setItem('page3_enter_time', new Date().getTime());
+        // 记录进入时间
+        sessionStorage.setItem('page3_enter', Date.now());
     </script>
     <title>用戶主頁</title>
 </head>
 <body>
     <h1>歡迎回來！</h1>
-    <input type="text" id="messageInput" placeholder="輸入訊息">
-    <button onclick="handleSendButton()">發送</button>
-    
+    <input type="text" id="userMessage" placeholder="輸入訊息">
+    <button type="button" onclick="handleSend()">發送</button>
+
     <script>
-        // 計算頁面停留時間並發送事件
-        function calculatePage3StayTime() {
-            const enterTime = parseInt(sessionStorage.getItem('page3_enter_time'));
-            const exitTime = new Date().getTime();
-            const stayDuration = (exitTime - enterTime) / 1000; // 轉換為秒
-            
-            gtag('event', 'page_stay_time', {
-                'page_title': '用戶主頁',
-                'page_path': '/page3.html',
-                'stay_duration': stayDuration,
-                'event_category': '頁面停留時間',
-                'event_label': '用戶在用戶主頁停留時間'
+        // 发送停留时间事件
+        function trackPage3Stay() {
+            const staySeconds = (Date.now() - parseInt(sessionStorage.getItem('page3_enter'))) / 1000;
+            gtag('event', 'page3_stay', {
+                'stay_seconds': staySeconds,
+                'page_path': '/page3.html'
             });
         }
 
-        function handleSendButton() {
-            // 計算並發送頁面停留時間
-            calculatePage3StayTime();
+        // 发送按钮事件（含消息内容）
+        function handleSend() {
+            // 先发送停留时间
+            trackPage3Stay();
             
-            const message = document.getElementById('messageInput').value;
+            // 获取用户输入
+            const message = document.getElementById('userMessage').value;
             
-            // 觸發 GA4 事件：記錄發送按鈕點擊
-            gtag('event', 'button_click', {
-                'button_name': '發送按鈕',
-                'page_title': '用戶主頁',
-                'page_path': '/page3.html',
-                'event_category': '按鈕點擊',
-                'event_label': '用戶點擊發送按鈕',
-                'message_content': message || '空消息',
-                'timestamp': new Date().getTime()
+            // 发送按钮点击事件
+            gtag('event', 'page3_button_click', {
+                'click_timestamp': Date.now(),
+                'button_name': '發送',
+                'message_content': message || '空消息'
             });
             
-            // 顯示提示
             alert('已模擬發送！');
         }
-        
-        // 頁面卸載時記錄時間（如果用戶直接關閉頁面）
-        window.addEventListener('beforeunload', function() {
-            calculatePage3StayTime();
-        });
+
+        // 页面关闭时补发停留时间
+        window.addEventListener('beforeunload', trackPage3Stay);
     </script>
 </body>
 </html>

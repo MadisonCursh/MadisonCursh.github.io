@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4ZGD289Y7"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -9,56 +8,45 @@
         gtag('js', new Date());
         gtag('config', 'G-P4ZGD289Y7');
         
-        // 記錄頁面進入時間
-        sessionStorage.setItem('page1_enter_time', new Date().getTime());
+        // 记录进入时间
+        sessionStorage.setItem('page1_enter', Date.now());
     </script>
     <title>註冊頁面</title>
 </head>
 <body>
     <h1>歡迎註冊</h1>
-    <form id="signupForm" onsubmit="return false;">
+    <form id="signupForm">
         <input type="email" placeholder="電子郵件" required>
-        <button onclick="handleSignup()">登錄/註冊</button>
+        <button type="button" onclick="handleSignup()">登錄/註冊</button>
     </form>
 
     <script>
-        // 計算頁面停留時間並發送事件
-        function calculatePage1StayTime() {
-            const enterTime = parseInt(sessionStorage.getItem('page1_enter_time'));
-            const exitTime = new Date().getTime();
-            const stayDuration = (exitTime - enterTime) / 1000; // 轉換為秒
-            
-            gtag('event', 'page_stay_time', {
-                'page_title': '註冊頁面',
-                'page_path': '/page1.html',
-                'stay_duration': stayDuration,
-                'event_category': '頁面停留時間',
-                'event_label': '用戶在註冊頁面停留時間'
+        // 发送停留时间事件
+        function trackPage1Stay() {
+            const staySeconds = (Date.now() - parseInt(sessionStorage.getItem('page1_enter'))) / 1000;
+            gtag('event', 'page1_stay', {
+                'stay_seconds': staySeconds,
+                'page_path': '/page1.html'
             });
         }
 
+        // 按钮点击事件
         function handleSignup() {
-            // 計算並發送頁面停留時間
-            calculatePage1StayTime();
+            // 先发送停留时间
+            trackPage1Stay();
             
-            // 觸發 GA4 事件：記錄按鈕點擊
-            gtag('event', 'button_click', {
-                'button_name': '登錄/註冊按鈕',
-                'page_title': '註冊頁面',
-                'page_path': '/page1.html',
-                'event_category': '按鈕點擊',
-                'event_label': '用戶點擊註冊按鈕',
-                'timestamp': new Date().getTime()
+            // 发送按钮点击事件
+            gtag('event', 'page1_button_click', {
+                'click_timestamp': Date.now(),
+                'button_name': '登錄/註冊'
             });
             
-            // 跳轉到第二頁
+            // 跳转到第二页
             window.location.href = 'page2.html';
         }
-        
-        // 頁面卸載時記錄時間（如果用戶直接關閉頁面）
-        window.addEventListener('beforeunload', function() {
-            calculatePage1StayTime();
-        });
+
+        // 页面关闭时补发停留时间
+        window.addEventListener('beforeunload', trackPage1Stay);
     </script>
 </body>
 </html>

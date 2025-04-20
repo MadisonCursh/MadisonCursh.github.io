@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4ZGD289Y7"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -9,53 +8,42 @@
         gtag('js', new Date());
         gtag('config', 'G-P4ZGD289Y7');
         
-        // 記錄頁面進入時間
-        sessionStorage.setItem('page2_enter_time', new Date().getTime());
+        // 记录进入时间
+        sessionStorage.setItem('page2_enter', Date.now());
     </script>
     <title>介紹頁面</title>
 </head>
 <body>
     <h1>我們的網站</h1>
-    <button onclick="handleNextButton()">率先體驗</button>
-    
+    <button type="button" onclick="handleNext()">率先體驗</button>
+
     <script>
-        // 計算頁面停留時間並發送事件
-        function calculatePage2StayTime() {
-            const enterTime = parseInt(sessionStorage.getItem('page2_enter_time'));
-            const exitTime = new Date().getTime();
-            const stayDuration = (exitTime - enterTime) / 1000; // 轉換為秒
-            
-            gtag('event', 'page_stay_time', {
-                'page_title': '介紹頁面',
-                'page_path': '/page2.html',
-                'stay_duration': stayDuration,
-                'event_category': '頁面停留時間',
-                'event_label': '用戶在介紹頁面停留時間'
+        // 发送停留时间事件
+        function trackPage2Stay() {
+            const staySeconds = (Date.now() - parseInt(sessionStorage.getItem('page2_enter'))) / 1000;
+            gtag('event', 'page2_stay', {
+                'stay_seconds': staySeconds,
+                'page_path': '/page2.html'
             });
         }
 
-        function handleNextButton() {
-            // 計算並發送頁面停留時間
-            calculatePage2StayTime();
+        // 按钮点击事件
+        function handleNext() {
+            // 先发送停留时间
+            trackPage2Stay();
             
-            // 觸發 GA4 事件：記錄按鈕點擊
-            gtag('event', 'button_click', {
-                'button_name': '率先體驗按鈕',
-                'page_title': '介紹頁面',
-                'page_path': '/page2.html',
-                'event_category': '按鈕點擊',
-                'event_label': '用戶點擊率先體驗按鈕',
-                'timestamp': new Date().getTime()
+            // 发送按钮点击事件
+            gtag('event', 'page2_button_click', {
+                'click_timestamp': Date.now(),
+                'button_name': '率先體驗'
             });
             
-            // 跳轉到第三頁
+            // 跳转到第三页
             window.location.href = 'page3.html';
         }
-        
-        // 頁面卸載時記錄時間（如果用戶直接關閉頁面）
-        window.addEventListener('beforeunload', function() {
-            calculatePage2StayTime();
-        });
+
+        // 页面关闭时补发停留时间
+        window.addEventListener('beforeunload', trackPage2Stay);
     </script>
 </body>
 </html>
