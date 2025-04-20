@@ -7,17 +7,12 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-P4ZGD289Y7');
+        
+        // 記錄頁面進入時間
+        sessionStorage.setItem('page1_enter_time', new Date().getTime());
     </script>
     <title>註冊頁面</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'GA_MEASUREMENT_ID'); // 替換成你的 GA4 測量ID
-    </script>
 </head>
 <body>
     <h1>歡迎註冊</h1>
@@ -27,15 +22,43 @@
     </form>
 
     <script>
-        function handleSignup() {
-            // 觸發 GA4 事件：記錄按鈕點擊
-            gtag('event', 'click', {
-                'event_category': '註冊',
-                'event_label': '用戶點擊註冊按鈕'
+        // 計算頁面停留時間並發送事件
+        function calculatePage1StayTime() {
+            const enterTime = parseInt(sessionStorage.getItem('page1_enter_time'));
+            const exitTime = new Date().getTime();
+            const stayDuration = (exitTime - enterTime) / 1000; // 轉換為秒
+            
+            gtag('event', 'page_stay_time', {
+                'page_title': '註冊頁面',
+                'page_path': '/page1.html',
+                'stay_duration': stayDuration,
+                'event_category': '頁面停留時間',
+                'event_label': '用戶在註冊頁面停留時間'
             });
+        }
+
+        function handleSignup() {
+            // 計算並發送頁面停留時間
+            calculatePage1StayTime();
+            
+            // 觸發 GA4 事件：記錄按鈕點擊
+            gtag('event', 'button_click', {
+                'button_name': '登錄/註冊按鈕',
+                'page_title': '註冊頁面',
+                'page_path': '/page1.html',
+                'event_category': '按鈕點擊',
+                'event_label': '用戶點擊註冊按鈕',
+                'timestamp': new Date().getTime()
+            });
+            
             // 跳轉到第二頁
             window.location.href = 'page2.html';
         }
+        
+        // 頁面卸載時記錄時間（如果用戶直接關閉頁面）
+        window.addEventListener('beforeunload', function() {
+            calculatePage1StayTime();
+        });
     </script>
 </body>
 </html>

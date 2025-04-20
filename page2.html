@@ -7,20 +7,55 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-P4ZGD289Y7');
+        
+        // 記錄頁面進入時間
+        sessionStorage.setItem('page2_enter_time', new Date().getTime());
     </script>
     <title>介紹頁面</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'GA_MEASUREMENT_ID'); // 替換 ID
-    </script>
 </head>
 <body>
     <h1>我們的網站</h1>
-    <button onclick="window.location.href='page3.html'">率先體驗</button>
+    <button onclick="handleNextButton()">率先體驗</button>
+    
+    <script>
+        // 計算頁面停留時間並發送事件
+        function calculatePage2StayTime() {
+            const enterTime = parseInt(sessionStorage.getItem('page2_enter_time'));
+            const exitTime = new Date().getTime();
+            const stayDuration = (exitTime - enterTime) / 1000; // 轉換為秒
+            
+            gtag('event', 'page_stay_time', {
+                'page_title': '介紹頁面',
+                'page_path': '/page2.html',
+                'stay_duration': stayDuration,
+                'event_category': '頁面停留時間',
+                'event_label': '用戶在介紹頁面停留時間'
+            });
+        }
+
+        function handleNextButton() {
+            // 計算並發送頁面停留時間
+            calculatePage2StayTime();
+            
+            // 觸發 GA4 事件：記錄按鈕點擊
+            gtag('event', 'button_click', {
+                'button_name': '率先體驗按鈕',
+                'page_title': '介紹頁面',
+                'page_path': '/page2.html',
+                'event_category': '按鈕點擊',
+                'event_label': '用戶點擊率先體驗按鈕',
+                'timestamp': new Date().getTime()
+            });
+            
+            // 跳轉到第三頁
+            window.location.href = 'page3.html';
+        }
+        
+        // 頁面卸載時記錄時間（如果用戶直接關閉頁面）
+        window.addEventListener('beforeunload', function() {
+            calculatePage2StayTime();
+        });
+    </script>
 </body>
 </html>
