@@ -8,10 +8,9 @@
         gtag('js', new Date());
         gtag('config', 'G-P4ZGD289Y7');
 
-        // 记录进入时间
         sessionStorage.setItem('page1_enter', Date.now());
     </script>
-    <title>星際註冊站</title>
+    <title>Artificial Intelligence Assistant Program</title>
     <style>
         * {
             margin: 0;
@@ -30,7 +29,6 @@
             overflow: hidden;
         }
 
-        /* 科幻背景效果 */
         body::before {
             content: '';
             position: absolute;
@@ -109,7 +107,6 @@
             box-shadow: 0 0 30px #00f3ff;
         }
 
-        /* 星空效果 */
         .stars {
             position: fixed;
             width: 100vw;
@@ -131,19 +128,17 @@
     </style>
 </head>
 <body>
-    <!-- 动态星空 -->
     <div class="stars" id="stars"></div>
 
     <div class="container">
-        <h1>星際通行證註冊</h1>
+        <h1>Program Pass Registration</h1>
         <form id="signupForm">
-            <input type="email" placeholder="量子郵件地址" required>
-            <button type="button" onclick="handleSignup()">啟動傳送</button>
+            <input type="email" placeholder="email/phone" required>
+            <button type="button" onclick="handleSignup()">Start</button>
         </form>
     </div>
 
     <script>
-        // 生成星空效果
         function createStars() {
             const starsContainer = document.getElementById('stars');
             for (let i = 0; i < 100; i++) {
@@ -158,11 +153,8 @@
         }
         createStars();
 
-        // 原有GA4功能保持不變...
-        // [保留原有所有JavaScript功能]
     </script>
     <script>
-        // 发送停留时间事件
         function trackPage1Stay() {
             const staySeconds = (Date.now() - parseInt(sessionStorage.getItem('page1_enter'))) / 1000;
             gtag('event', 'page1_stay', {
@@ -171,22 +163,17 @@
             });
         }
 
-        // 按钮点击事件
         function handleSignup() {
-            // 先发送停留时间
             trackPage1Stay();
             
-            // 发送按钮点击事件
             gtag('event', 'page1_button_click', {
                 'click_timestamp': Date.now(),
                 'button_name': '登錄/註冊'
             });
             
-            // 跳转到第二页
             window.location.href = 'page2.html';
         }
 
-        // 页面关闭时补发停留时间
         window.addEventListener('beforeunload', trackPage1Stay);
     </script>
 </body>
