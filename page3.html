@@ -7,7 +7,6 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-P4ZGD289Y7');
-
         sessionStorage.setItem('page3_enter', Date.now());
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,8 +31,8 @@
 
         .chat-container {
             width: 800px;
-            height: 500px;
-            background: rgba(12, 12, 46, 0.8);
+            height: 600px;
+            background: rgba(12, 12, 46, 0.9);
             border: 2px solid #00f3ff;
             border-radius: 15px;
             backdrop-filter: blur(10px);
@@ -53,28 +52,40 @@
         }
 
         .message {
-            margin: 10px 0;
+            margin: 15px 0;
             padding: 12px 20px;
-            border-radius: 20px;
-            max-width: 80%;
-            animation: messageAppear 0.3s ease;
+            border-radius: 15px;
+            max-width: 70%;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: messageAppear 0.5s ease forwards;
+            clear: both;
         }
 
         .user-message {
-            background: rgba(255, 123, 0, 0.925);
+            background: rgba(255, 255, 255, 0.897);
             border: 1px solid #00f3ff;
-            margin-left: auto;
+            float: right;
+            margin-right: 0;
+            margin-left: 30%;
+            box-shadow: 0 0 15px #00f3ff33;
         }
 
         .ai-message {
-            background: rgb(248, 105, 3);
+            background: rgb(255, 162, 0);
             border: 1px solid #0066ff;
-            margin-right: auto;
+            float: left;
+            margin-left: 0;
+            margin-right: 30%;
+            box-shadow: 0 0 15px #0066ff33;
         }
 
         @keyframes messageAppear {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .input-group {
@@ -92,12 +103,18 @@
             transition: all 0.3s ease;
         }
 
+        #userMessage:focus {
+            outline: none;
+            box-shadow: 0 0 20px #00f3ff33;
+        }
+
         button {
             background: linear-gradient(45deg, #00f3ff, #0066ff);
             border: none;
             padding: 15px 30px;
             border-radius: 30px;
             cursor: pointer;
+            color: #fff;
             transition: all 0.3s ease;
         }
 
@@ -122,29 +139,112 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .connecting-dots::after {
+            content: '...';
+            display: inline-block;
+            animation: connecting 1.5s infinite;
+        }
+
+        @keyframes connecting {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+            100% { content: '.'; }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 95%;
+                height: 90vh;
+                padding: 10px;
+            }
+            
+            .message {
+                max-width: 85%;
+                margin-left: 15% !important;
+                margin-right: 15% !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
-        <h1 style="color: #00f3ff; text-align: center; margin-bottom: 20px;">Horse - Easy work assistant</h1>
-        
-        <div class="chat-messages" id="chatMessages">
-            <div class="message ai-message">Horse connection is successful, please enter...</div>
-        </div>
-
+        <h1 style="color: #00f3ff; text-align: center; margin-bottom: 20px;">Horse🐎 - Easy work assistant</h1>
+        <div class="chat-messages" id="chatMessages"></div>
         <div class="input-group">
-            <input type="text" id="userMessage" placeholder="Enter">
+            <input type="text" id="userMessage" placeholder="send">
             <button type="button" onclick="handleSend()" id="sendButton">send</button>
         </div>
     </div>
 
     <script>
-        const API_KEY = 'Horse.No1';
+        const API_KEY = 'sk-your-api-key-here'; 
 
-        async function callOpenAI(message) {
+        function initConnectionSequence() {
+            addDelayedMessage('<span class="connecting-dots">Initializing...</span>', 500, false);
+            addDelayedMessage('▮▮▮▮▮ Chat loading', 2000, false);
+            addDelayedMessage('Welcome back, how can I help you?', 5000, false);
+        }
+
+        function addDelayedMessage(content, delay, isUser = false) {
+            setTimeout(() => {
+                addMessage(content, isUser, true);
+            }, delay);
+        }
+
+        function addMessage(content, isUser = false, isHtml = false) {
+            const chatBox = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            
+            if(isHtml) {
+                messageDiv.innerHTML = content;
+            } else {
+                messageDiv.textContent = content;
+            }
+            
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function handleSend() {
+            const input = document.getElementById('userMessage');
+            const message = input.value.trim();
+            
+            if (!message) {
+                input.style.borderColor = '#ff0066';
+                return;
+            }
+
+            input.style.borderColor = '#00f3ff';
+            
+            gtag('event', 'page3_button_click', {
+                'click_timestamp': Date.now(),
+                'button_name': 'send',
+                'message_content': message
+            });
+
+            addMessage(message, true);
+            input.value = '';
+            
             const button = document.getElementById('sendButton');
+            button.disabled = true;
             button.classList.add('loading');
             
+            try {
+                const response = await callOpenAI(message);
+                addMessage(response, false);
+            } catch (error) {
+                addMessage('Unable to contact 🐎, please try again later', false);
+            } finally {
+                button.disabled = false;
+                button.classList.remove('loading');
+            }
+        }
+
+        async function callOpenAI(message) {
             try {
                 const response = await fetch('https://api.openai.com/v1/chat/completions', {
                     method: 'POST',
@@ -165,51 +265,12 @@
                 const data = await response.json();
                 return data.choices[0].message.content;
             } catch (error) {
-                console.error('error:', error);
-                return 'Try later...';
-            } finally {
-                button.classList.remove('loading');
+                console.error('API錯誤:', error);
+                throw error;
             }
         }
 
-        function addMessage(message, isUser = true) {
-            const chatBox = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
-            messageDiv.textContent = message;
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        async function handleSend() {
-            const input = document.getElementById('userMessage');
-            const message = input.value.trim();
-            
-            if (!message) {
-                input.placeholder = 'Please enter a valid message!';
-                input.style.borderColor = '#ff0066';
-                return;
-            }
-
-            trackPage3Stay();
-            gtag('event', 'page3_button_click', {
-                'click_timestamp': Date.now(),
-                'button_name': 'send',
-                'message_content': message
-            });
-
-            addMessage(message, true);
-            input.value = '';
-            
-            try {
-                const response = await callOpenAI(message);
-                addMessage(response, false);
-            } catch (error) {
-                addMessage('Try later...', false);
-            }
-        }
-
-        function trackPage3Stay() {
+        window.addEventListener('beforeunload', () => {
             const enterTime = parseInt(sessionStorage.getItem('page3_enter'));
             if (!isNaN(enterTime)) {
                 const staySeconds = (Date.now() - enterTime) / 1000;
@@ -218,9 +279,11 @@
                     'page_path': location.pathname
                 });
             }
-        }
+        });
 
-        window.addEventListener('beforeunload', trackPage3Stay);
+        window.addEventListener('DOMContentLoaded', () => {
+            initConnectionSequence();
+        });
     </script>
 </body>
 </html>
