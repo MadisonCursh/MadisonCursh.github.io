@@ -8,11 +8,10 @@
         gtag('js', new Date());
         gtag('config', 'G-P4ZGD289Y7');
 
-        // 记录进入时间
         sessionStorage.setItem('page2_enter', Date.now());
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星際導覽</title>
+    <title>welcome</title>
     <style>
         * {
             margin: 0;
@@ -31,7 +30,6 @@
             overflow: hidden;
         }
 
-        /* 科幻脉冲背景 */
         body::after {
             content: '';
             position: absolute;
@@ -109,7 +107,6 @@
             box-shadow: 0 0 40px #00f3ff66;
         }
 
-        /* 悬浮全息投影效果 */
         .hologram {
             position: absolute;
             width: 300px;
@@ -130,13 +127,12 @@
     <div class="hologram" style="bottom:20%;right:10%"></div>
 
     <div class="container">
-        <h1>量子空間導覽</h1>
+        <h1>Start your life assistant</h1>
         <div class="cyber-line"></div>
-        <button type="button" onclick="handleNext()">啟動躍遷</button>
+        <button type="button" onclick="handleNext()">Start</button>
     </div>
 
     <script>
-        // 停留时间统计
         function trackPage2Stay() {
             const enterTime = parseInt(sessionStorage.getItem('page2_enter'));
             if (!isNaN(enterTime)) {
@@ -148,19 +144,17 @@
             }
         }
 
-        // 按钮点击处理
         function handleNext() {
             trackPage2Stay();
             
             gtag('event', 'page2_button_click', {
                 'click_timestamp': Date.now(),
-                'button_name': '啟動躍遷'
+                'button_name': 'Start'
             });
 
             window.location.href = 'page3.html';
         }
 
-        // 页面关闭事件
         window.addEventListener('beforeunload', trackPage2Stay);
     </script>
 </body>
