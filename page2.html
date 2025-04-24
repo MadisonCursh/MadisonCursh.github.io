@@ -7,42 +7,160 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-P4ZGD289Y7');
-        
+
         // 记录进入时间
         sessionStorage.setItem('page2_enter', Date.now());
     </script>
-    <title>介紹頁面</title>
-</head>
-<body>
-    <h1>我們的網站</h1>
-    <button type="button" onclick="handleNext()">率先體驗</button>
-
-    <script>
-        // 发送停留时间事件
-        function trackPage2Stay() {
-            const staySeconds = (Date.now() - parseInt(sessionStorage.getItem('page2_enter'))) / 1000;
-            gtag('event', 'page2_stay', {
-                'stay_seconds': staySeconds,
-                'page_path': '/page2.html'
-            });
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星際導覽</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
         }
 
-        // 按钮点击事件
+        body {
+            min-height: 100vh;
+            background: linear-gradient(45deg, #0a0a2e, #1a1a4f);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 科幻脉冲背景 */
+        body::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, #00f2ff33 10%, transparent 30%);
+            animation: pulse 8s linear infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(0.8); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            background: rgba(12, 12, 46, 0.9);
+            padding: 4rem 6rem;
+            border-radius: 15px;
+            border: 2px solid #00f3ff;
+            box-shadow: 0 0 80px #00f3ff66;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #00f3ff;
+            font-size: 3em;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px #00f3ff;
+            letter-spacing: 2px;
+        }
+
+        .cyber-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f3ff, transparent);
+            margin: 2rem 0;
+        }
+
+        button {
+            background: linear-gradient(45deg, #00f3ff, #0066ff);
+            border: none;
+            padding: 1.2rem 3rem;
+            color: #fff;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, #ffffff33, transparent);
+            transform: rotate(45deg);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
+        }
+
+        button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 40px #00f3ff66;
+        }
+
+        /* 悬浮全息投影效果 */
+        .hologram {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="%2300f3ff" stroke-width="2" stroke-dasharray="5"/></svg>');
+            animation: rotate 20s linear infinite;
+            opacity: 0.2;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="hologram" style="top:20%;left:10%"></div>
+    <div class="hologram" style="bottom:20%;right:10%"></div>
+
+    <div class="container">
+        <h1>量子空間導覽</h1>
+        <div class="cyber-line"></div>
+        <button type="button" onclick="handleNext()">啟動躍遷</button>
+    </div>
+
+    <script>
+        // 停留时间统计
+        function trackPage2Stay() {
+            const enterTime = parseInt(sessionStorage.getItem('page2_enter'));
+            if (!isNaN(enterTime)) {
+                const staySeconds = (Date.now() - enterTime) / 1000;
+                gtag('event', 'page2_stay', {
+                    'stay_seconds': staySeconds,
+                    'page_path': location.pathname
+                });
+            }
+        }
+
+        // 按钮点击处理
         function handleNext() {
-            // 先发送停留时间
             trackPage2Stay();
             
-            // 发送按钮点击事件
             gtag('event', 'page2_button_click', {
                 'click_timestamp': Date.now(),
-                'button_name': '率先體驗'
+                'button_name': '啟動躍遷'
             });
-            
-            // 跳转到第三页
+
             window.location.href = 'page3.html';
         }
 
-        // 页面关闭时补发停留时间
+        // 页面关闭事件
         window.addEventListener('beforeunload', trackPage2Stay);
     </script>
 </body>
